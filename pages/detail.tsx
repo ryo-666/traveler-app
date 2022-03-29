@@ -25,7 +25,7 @@ const Detail:FC<Props> = (props: Props) => {
       <Card sx={{ maxWidth: 550 }}>
             <CardMedia
               component="img"
-              height="140"
+              height="200"
               image={props.hotel.hotels[1].hotel[0].hotelBasicInfo.roomImageUrl}
               alt="green iguana"
             />
