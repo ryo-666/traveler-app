@@ -1,24 +1,15 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect} from 'react';
 import fetch from "node-fetch";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { styled, alpha } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import InputBase from '@mui/material/InputBase';
-import DateFnsUtils from '@date-io/date-fns'
-import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import moment from 'moment'
 import 'moment/locale/ja'
 moment.locale('ja')
-import MomentUtils from '@date-io/moment'
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+
 
 
 interface Props {
@@ -27,23 +18,22 @@ interface Props {
 
 const Hotel:FC<Props> = (props:Props) => {
   // console.log(props.hotel.hotels[0].hotel[0].hotelBasicInfo.hotelName);
-  console.log(props.hotel);
+  // console.log(props.hotel);
   console.log(props.hotel.hotels[0].hotel[0].hotelBasicInfo.latitude);
   console.log(props.hotel.hotels[0].hotel[0].hotelBasicInfo.longitude);
 
 
-  const [date1, setDate1] = useState<Date | null>(new Date())
-  const [date2, setDate2] = useState<Date | null>(new Date())
-  const [keywords, setKeywords] = useState("大阪");
+  const [keywords, setKeywords] = useState("北海道");
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLlongitude] = useState(null);
 
-  const changeDateHandler1 = (newDate: Date | null): void => {
-    setDate1(newDate)
-  }
-  const changeDateHandler2 = (newDate: Date | null): void => {
-    setDate2(newDate)
-  }
+  useEffect(() => {
+    setLatitude(props.hotel.hotels[0].hotel[0].hotelBasicInfo.latitude)
+    console.log(latitude)
+    setLlongitude(props.hotel.hotels[0].hotel[0].hotelBasicInfo.longitude)
+    console.log(longitude)
+
+  },[])
 
   const handleChange = (e) => {
     setKeywords(() => e.target.value)
@@ -61,10 +51,12 @@ const Hotel:FC<Props> = (props:Props) => {
   }
 
   const getVacantinformation = async() => {
-    const checkinDate = date1;
-    const checkoutDate = date2;
-    const latitudeName = props.hotel.hotels[0].hotel[0].hotelBasicInfo.latitude;
-    const longitudeName = props.hotel.hotels[0].hotel[0].hotelBasicInfo.longitude;
+    const changeFormatDate1 = moment(date1).format('YYYY-MM-DD')
+    const checkinDate = changeFormatDate1;
+    const changeFormatDate2 = moment(date2).format('YYYY-MM-DD')
+    const checkoutDate = changeFormatDate2;
+    const latitudeName = latitude;
+    const longitudeName = longitude;
 
     const res = await fetch(
       new URL(`${process.env.NEXT_PUBLIC_VACANT_API}&checkinDate=${checkinDate}&checkoutDate=${checkoutDate}&latitude=${latitudeName}&longitude=${longitudeName}&applicationId=${process.env.NEXT_PUBLIC_ApplicationId}`)
@@ -74,92 +66,117 @@ const Hotel:FC<Props> = (props:Props) => {
     return data;
   }
 
-  return (
-    <div>
-        <div>
-         <input type="text" value={keywords} onChange={handleChange} />
-          <p onClick={() => getInformation()}>push</p>
-          <p onClick={() => getVacantinformation()}>空室ボタン</p>
-        </div>
-        <div>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <DatePicker value={date1} onChange={changeDateHandler1} />
-        </MuiPickersUtilsProvider>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <DatePicker value={date2} onChange={changeDateHandler2} />
-        </MuiPickersUtilsProvider>
-        </div>
+  function createData(
+    name: string,
+    calories: number,
+    fat: number,
+    carbs: number,
+    protein: number,
+  ) {
+    return { name, calories, fat, carbs, protein };
+  }
+  
+  const rows = [
+    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+    createData('Eclair', 262, 16.0, 24, 6.0),
+    createData('Cupcake', 305, 3.7, 67, 4.3),
+    createData('Gingerbread', 356, 16.0, 49, 3.9),
+  ];
 
-        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          {/* <Avatar alt="Remy Sharp" src={props.hotel.hotels[0].hotel[0].hotelBasicInfo.roomImageUrl} /> */}
-        </ListItemAvatar>
-        <ListItemText
-          // primary={props.hotel.hotels[0].hotel[0].hotelBasicInfo.hotelName}
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: 'inline' }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                {/* {props.hotel.hotels[0].hotel[0].hotelBasicInfo.hotelSpecial} */}
+  return (
+    <>
+        <div className="main-contants">
+         <input type="text" value={keywords} onChange={handleChange} />
+          <p onClick={() => getInformation()}>検索</p>
+          {/* <p onClick={() => getVacantinformation()}>空室ボタン</p> */}
+        </div>
+        <ul>
+          <li>
+          <Card sx={{ maxWidth: 450 }}>
+            <CardMedia
+              component="img"
+              height="140"
+              image={props.hotel.hotels[1].hotel[0].hotelBasicInfo.roomImageUrl}
+              alt="green iguana"
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                {props.hotel.hotels[0].hotel[0].hotelBasicInfo.hotelName}
               </Typography>
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-      <Divider variant="inset" component="li" />
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          {/* <Avatar alt="Travis Howard" src={props.hotel.hotels[1].hotel[0].hotelBasicInfo.roomImageUrl} /> */}
-        </ListItemAvatar>
-        <ListItemText
-          // primary={props.hotel.hotels[1].hotel[0].hotelBasicInfo.hotelName}
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: 'inline' }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
+              <div className="spacer"></div>
+              <Typography variant="body2" color="text.secondary">
+                {props.hotel.hotels[0].hotel[0].hotelBasicInfo.hotelSpecial}
               </Typography>
-              {/* {props.hotel.hotels[1].hotel[0].hotelBasicInfo.hotelSpecial} */}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-      <Divider variant="inset" component="li" />
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          {/* <Avatar alt="Cindy Baker" src={props.hotel.hotels[2].hotel[0].hotelBasicInfo.roomImageUrl} /> */}
-        </ListItemAvatar>
-        <ListItemText
-          // primary={props.hotel.hotels[2].hotel[0].hotelBasicInfo.hotelName}
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: 'inline' }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
+              <div className="spacer"></div>
+              <Typography variant="body2" color="text.secondary">
+                ■アクセス<br />
+                {props.hotel.hotels[0].hotel[0].hotelBasicInfo.access}
               </Typography>
-              {/* {props.hotel.hotels[2].hotel[0].hotelBasicInfo.hotelSpecial} */}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-    </List>
-    </div>
+              <div className="spacer"></div>
+              <Typography variant="body2" color="text.secondary">
+              ■駐車場情報<br />
+                {props.hotel.hotels[0].hotel[0].hotelBasicInfo.parkingInformation}
+              </Typography>
+              <div className="spacer"></div>
+              <Typography variant="body2" color="text.secondary">
+              ■電話番号　<br />
+                {props.hotel.hotels[0].hotel[0].hotelBasicInfo.telephoneNo}
+              </Typography>
+              <div className="spacer"></div>
+            </CardContent>
+          </Card>
+          </li>
+        </ul>
+        <div className="paging">
+          <Stack spacing={2} >
+            <Pagination count={10} />
+          </Stack>
+        </div>
+        <style jsx>
+          {`
+            ul {
+              list-style: none;
+              display: flex;
+              flex-wrap: wrap;
+            }
+
+            li {
+              list-style: none;
+              margin: 0 20px 20px 0;
+            }
+
+            .pad {
+              box-shadow: none;
+            }
+
+            .main-contants {
+              margin: 0 auto;
+              width: fit-content;
+              display: flex;
+              align-items: center;
+            }
+
+            .main-contants input {
+              margin-right: 10px;
+            }
+
+            .spacer {
+              margin-bottom: 15px;
+            }
+
+            .paging {
+              margin: 0 auto;
+              width: fit-content;
+            }
+          `}
+        </style>
+    </>
   )
 }
 
 export const getStaticProps = async () => {
-    const keyword = "大阪"
+    const keyword = "北海道"
     const res = await fetch(
       new URL(`${process.env.NEXT_PUBLIC_SEARCH_API}&keyword=${keyword}&applicationId=${process.env.NEXT_PUBLIC_ApplicationId}`)
     );
