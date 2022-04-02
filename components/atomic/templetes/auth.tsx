@@ -8,10 +8,14 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import Cookie from 'universal-cookie';
+
+const cookie = new Cookie();
 
 function Copyright(props: any) {
   return (
@@ -28,15 +32,64 @@ function Copyright(props: any) {
 
 const theme = createTheme();
 
-export default function SignIn() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+export default function Auth() {
+  const router = useRouter();
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [isLogin, setIsLogin] = React.useState(true);
+
+  const login = async () => {
+    try {
+      await fetch(
+        `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/jwt/create/`,
+        {
+          method: "POST",
+          body: JSON.stringify({ username: username, password: password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((res) => {
+          if (res.status === 400) {
+            throw "authentication failed";
+          } else if (res.ok) {
+            return res.json();
+          }
+        })
+        .then((data) => {
+          const options = { path: "/" };
+          cookie.set("access_token", data.access, options);
+        });
+      router.push("/hotel");
+    } catch (err) {
+      alert(err);
+    }
+  }
+
+  const authSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isLogin) {
+      login();
+    } else {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}api/register/`, {
+          method: "POST",
+          body: JSON.stringify({ username: username, password: password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then((res) => {
+          if (res.status === 400) {
+            throw "authentication failed";
+          }
+        });
+        login();
+      } catch (err) {
+        alert(err);
+      }
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -51,56 +104,46 @@ export default function SignIn() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            {isLogin ? 'Login' : 'Sign up'}
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={authSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              type="text"
+              autoComplete="text"
               autoFocus
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value)
+              }}
             />
             <TextField
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
               type="password"
-              id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+
+            <button type='button' onClick={() => setIsLogin(!isLogin)}>切り替えボタン</button>
+            
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={!username || !password}
             >
-              Sign In
+              {isLogin ? 'Login' : 'Sign up'}
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
