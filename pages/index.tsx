@@ -1,4 +1,4 @@
-import Auth from "../components/atomic/templetes/auth"
+import Auth from "../component/auth"
 
 const Home: React.FC = () => {
   return (

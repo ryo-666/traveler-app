@@ -18,7 +18,7 @@ const MediaList:FC<Props> = (props: Props) => {
               component="img"
               height="140"
               image={props.item.hotel[0].hotelBasicInfo.roomImageUrl}
-              alt="green iguana"
+              alt=""
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
