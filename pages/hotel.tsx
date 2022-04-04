@@ -1,76 +1,71 @@
 import React, { FC, useState, useEffect} from 'react';
 import fetch from "node-fetch";
 import MediaList from '../component/MediaList';
+import Link from 'next/link';
+import { connect } from 'react-redux';
+import store from '../store';
+import DetailMedia from '../component/detailMedia';
 
-interface Props {
 
-}
+const mapStateToProps = (state) => {
+  return {
+    keyword: state.keyword,
+  };
+};
 
-const Hotel:FC<Props> = (props:Props) => {
-  // console.log(props.hotel.hotels[0].hotel[0].hotelBasicInfo.hotelName);
-  // console.log(props.hotel);
-  console.log(props.hotel.hotels[0].hotel[0].hotelBasicInfo.latitude);
-  console.log(props.hotel.hotels[0].hotel[0].hotelBasicInfo.longitude);
 
-  const [data, setData] = useState(null);
+
+const Hotel= ({ dispatch, keyword }) => {
   const [keywords, setKeywords] = useState("北海道");
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLlongitude] = useState(null);
-  
-  const handleChange = (e) => {
-    setKeywords(() => e.target.value)
-    console.log(keywords)
+  const [hoteldata, setHotelData] = useState(null)
+  const [isDetail, setIsDetail] = useState(false);
+  // const hotelNo = hoteldata[0].hotel[0].hotelBasicInfo.hotelNo 
+
+  const searchRoom = async(e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // const keyword = keywords;
+    dispatch({ type: "setKeyword", value: keywords })
+    // console.log(keyword);
+    // console.log(store.getState().keyword)
+    try {
+      const url = `https://app.rakuten.co.jp/services/api/Travel/KeywordHotelSearch/20170426?format=json&keyword=${keywords}&applicationId=${process.env.NEXT_PUBLIC_APPLICATIONID}&hits=10`
+      const res = await fetch(url);
+      const resData = await res.json();
+      // console.log(resData);
+      const hotelsdata = resData.hotels;
+      setHotelData(hotelsdata)
+      // console.log(hotelsdata)
+      
+    } catch (error) {
+      console.log(error);
+    }
   }
-
-  const getInformation = async() => {
-    const keyword = keywords;
-    const res = await fetch(
-      new URL(`${process.env.NEXT_PUBLIC_SEARCH_API}&keyword=${keyword}&applicationId=${process.env.NEXT_PUBLIC_ApplicationId}&hits=10`)
-    );
-    const hotel = await res.json();
-    setData(() => {
-      hotel
-    })
-    console.log(hotel)
-    return {
-      props: {
-        hotel,
-      },
-    };
-  }
-
-  // const getVacantinformation = async() => {
-  //   const changeFormatDate1 = moment(date1).format('YYYY-MM-DD')
-  //   const checkinDate = changeFormatDate1;
-  //   const changeFormatDate2 = moment(date2).format('YYYY-MM-DD')
-  //   const checkoutDate = changeFormatDate2;
-  //   const latitudeName = latitude;
-  //   const longitudeName = longitude;
-
-  //   const res = await fetch(
-  //     new URL(`${process.env.NEXT_PUBLIC_VACANT_API}&checkinDate=${checkinDate}&checkoutDate=${checkoutDate}&latitude=${latitudeName}&longitude=${longitudeName}&applicationId=${process.env.NEXT_PUBLIC_ApplicationId}&hits=10`)
-  //   )
-  //   const data = await res.json();
-  //   console.log(data)
-  //   return data;
-  // }
 
   return (
     <>
-        <div className="main-contants">
-         <input type="text" value={keywords} onChange={handleChange} />
-          <p onClick={() => getInformation()}>検索</p>
-          {/* <p onClick={() => getVacantinformation()}>空室ボタン</p> */}
+        <div className="">
+              <form onSubmit={searchRoom}>
+                <input type="text" value={keywords} onChange={(e) => setKeywords(e.target.value)} />
+                <button type="submit">検索</button>
+              </form>
+              <ul>
+                {hoteldata &&
+                  hoteldata.map((item, index) => (
+                    <li key={index}>
+                        <a>
+                          <MediaList item={item}/>
+                        </a>
+                    </li>
+                ))}
+              </ul>
         </div>
-        <ul>
-          {props.hotel.hotels.map((item, index) => (
-            <li key={index}>
-              <MediaList item={item}/>
-            </li>
-          ))}
-        </ul>
         <style jsx>
           {`
+            a {
+              color: inherit;
+              text-decoration: none;
+            }
+
             ul {
               list-style: none;
               display: flex;
@@ -111,19 +106,4 @@ const Hotel:FC<Props> = (props:Props) => {
   )
 }
 
-export const getStaticProps = async () => {
-    const keyword = "北海道"
-    const res = await fetch(
-      new URL(`${process.env.NEXT_PUBLIC_SEARCH_API}&keyword=${keyword}&applicationId=${process.env.NEXT_PUBLIC_ApplicationId}&hits=10`)
-    );
-    const hotel = await res.json();
-    console.log(hotel)
-    return {
-      props: {
-        hotel,
-      },
-    };
-
-}
-
-export default Hotel;
+export default connect(mapStateToProps) (Hotel);

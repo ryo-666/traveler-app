@@ -3,6 +3,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
+import Link from 'next/link';
 
 interface Props {
     item: any;
@@ -12,7 +13,7 @@ const MediaList:FC<Props> = (props: Props) => {
 
   console.log(props);
   return (
-    <>
+    <Link href="/detail/[id]" as={`/detail/${props.item.hotel[0].hotelBasicInfo.hotelNo}`}>
         <Card sx={{ maxWidth: 450 }}>
             <CardMedia
               component="img"
@@ -46,7 +47,7 @@ const MediaList:FC<Props> = (props: Props) => {
               <div className="spacer"></div>
             </CardContent>
           </Card>
-    </>
+    </Link>
   )
 }
 
