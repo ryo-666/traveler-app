@@ -1,10 +1,9 @@
 import React, { FC, useState, useEffect} from 'react';
 import fetch from "node-fetch";
 import MediaList from '../component/MediaList';
-import Link from 'next/link';
 import { connect } from 'react-redux';
-import store from '../store';
-import DetailMedia from '../component/detailMedia';
+import Header from '../component/header';
+import Footer from '../component/footer';
 
 
 const mapStateToProps = (state) => {
@@ -17,16 +16,10 @@ const mapStateToProps = (state) => {
 
 const Hotel= ({ dispatch, keyword }) => {
   const [keywords, setKeywords] = useState("北海道");
-  const [hoteldata, setHotelData] = useState(null)
-  const [isDetail, setIsDetail] = useState(false);
-  // const hotelNo = hoteldata[0].hotel[0].hotelBasicInfo.hotelNo 
+  const [hoteldata, setHotelData] = useState(null);
 
   const searchRoom = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const keyword = keywords;
-    dispatch({ type: "setKeyword", value: keywords })
-    // console.log(keyword);
-    // console.log(store.getState().keyword)
     try {
       const url = `https://app.rakuten.co.jp/services/api/Travel/KeywordHotelSearch/20170426?format=json&keyword=${keywords}&applicationId=${process.env.NEXT_PUBLIC_APPLICATIONID}&hits=10`
       const res = await fetch(url);
@@ -43,24 +36,34 @@ const Hotel= ({ dispatch, keyword }) => {
 
   return (
     <>
-        <div className="">
-              <form onSubmit={searchRoom}>
+        <Header />
+        <div className="main">
+              <form onSubmit={searchRoom} className="form">
                 <input type="text" value={keywords} onChange={(e) => setKeywords(e.target.value)} />
-                <button type="submit">検索</button>
+                <button type="submit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 200 200"><g transform="translate(-14.472 -263.847)"><path d="M144.663,286.184a76.265,76.265,0,1,0-14.4,119.046L183.534,458.5a18.1,18.1,0,1,0,25.591-25.591l-53.269-53.268a76.265,76.265,0,0,0-11.195-93.456ZM124.12,306.728a47.211,47.211,0,1,1-66.767,0,47.212,47.212,0,0,1,66.767,0Z" transform="translate(0 0)"/></g></svg>
+                </button>
               </form>
               <ul>
                 {hoteldata &&
                   hoteldata.map((item, index) => (
                     <li key={index}>
                         <a>
-                          <MediaList item={item}/>
+                            <MediaList item={item}/>
                         </a>
                     </li>
                 ))}
               </ul>
         </div>
+        <Footer />
         <style jsx>
           {`
+            .main {
+              padding-top: 70px;
+              padding-bottom: 100px;
+
+            }
+
             a {
               color: inherit;
               text-decoration: none;
@@ -68,13 +71,15 @@ const Hotel= ({ dispatch, keyword }) => {
 
             ul {
               list-style: none;
-              display: flex;
-              flex-wrap: wrap;
+              margin: 0 auto;
+              width: fit-content;
+
             }
 
             li {
               list-style: none;
-              margin: 0 20px 20px 0;
+              margin: 0;
+              border-top: 1px solid #cdcdcd;
             }
 
             .pad {
@@ -99,6 +104,33 @@ const Hotel= ({ dispatch, keyword }) => {
             .paging {
               margin: 0 auto;
               width: fit-content;
+            }
+
+            .form {
+              margin: 30px auto;
+              width: fit-content;
+              position: relative;
+            }
+
+            .form input {
+              padding: 10px 20px;
+              border: 1px solid gray;
+              border-radius: 25px;
+              font-size: 15px
+            }
+
+            .form button {
+              background-color: transparent;
+              border: none;
+              position: absolute;
+              right: 8px;
+              bottom: 5px;
+              cursor: pointer;
+              z-index: 3;
+            }
+
+            body {
+                margin: 0;
             }
           `}
         </style>
