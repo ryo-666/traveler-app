@@ -2,52 +2,46 @@ import React, { FC } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Divider from '@mui/material/Divider';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import Link from 'next/link';
 
 interface Props {
     item: any;
+    onClick?: () => void;
 }
 
 const MediaList:FC<Props> = (props: Props) => {
 
-  console.log(props);
+  // console.log(props);
   return (
-    <Link href="/detail/[id]" as={`/detail/${props.item.hotel[0].hotelBasicInfo.hotelNo}`}>
-        <Card sx={{ maxWidth: 450 }}>
-            <CardMedia
-              component="img"
-              height="140"
-              image={props.item.hotel[0].hotelBasicInfo.roomImageUrl}
-              alt=""
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                {props.item.hotel[0].hotelBasicInfo.hotelName}
+    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+      <ListItem alignItems="flex-start">
+        <ListItemAvatar>
+          <Avatar alt="Remy Sharp" src={props.item.hotel[0].hotelBasicInfo.roomImageUrl} />
+        </ListItemAvatar>
+        <ListItemText
+          primary="Brunch this weekend?"
+          secondary={
+            <React.Fragment>
+              <Typography
+                sx={{ display: 'inline' }}
+                component="span"
+                variant="body2"
+                color="text.primary"
+              >
+                {props.item.hotel[0].hotelBasicInfo.hotelName}<br />
               </Typography>
-              <div className="spacer"></div>
-              <Typography variant="body2" color="text.secondary">
-                {props.item.hotel[0].hotelBasicInfo.hotelSpecial}
-              </Typography>
-              <div className="spacer"></div>
-              <Typography variant="body2" color="text.secondary">
-                ■アクセス<br />
-                {props.item.hotel[0].hotelBasicInfo.access}
-              </Typography>
-              <div className="spacer"></div>
-              <Typography variant="body2" color="text.secondary">
-              ■駐車場情報<br />
-                {props.item.hotel[0].hotelBasicInfo.parkingInformation}
-              </Typography>
-              <div className="spacer"></div>
-              <Typography variant="body2" color="text.secondary">
-              ■電話番号　<br />
-                {props.item.hotel[0].hotelBasicInfo.telephoneNo}
-              </Typography>
-              <div className="spacer"></div>
-            </CardContent>
-          </Card>
-    </Link>
+              {props.item.hotel[0].hotelBasicInfo.hotelSpecial}
+            </React.Fragment>
+          }
+        />
+      </ListItem>
+      </List>
   )
 }
 

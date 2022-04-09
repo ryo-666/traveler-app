@@ -92,62 +92,72 @@ export default function Auth() {
   }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            {isLogin ? 'Login' : 'Sign up'}
-          </Typography>
-          <Box component="form" onSubmit={authSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              type="text"
-              autoComplete="text"
-              autoFocus
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value)
-              }}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-            />
-
-            <button type='button' onClick={() => setIsLogin(!isLogin)}>切り替えボタン</button>
-            
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={!username || !password}
-            >
+    <>
+      <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 8,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            </Avatar>
+            <Typography component="h1" variant="h5">
               {isLogin ? 'Login' : 'Sign up'}
-            </Button>
+            </Typography>
+            <Box component="form" onSubmit={authSubmit} noValidate sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                type="text"
+                autoComplete="text"
+                autoFocus
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value)
+                }}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+              />
+
+              <p className='changeButton'><button type='button' onClick={() => setIsLogin(!isLogin)}>切り替えボタン</button></p>
+              
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                disabled={!username || !password}
+              >
+                {isLogin ? 'Login' : 'Sign up'}
+              </Button>
+            </Box>
           </Box>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Container>
+      </ThemeProvider>
+      <style jsx>
+        {`
+          .changeButton {
+            margin: 20px auto 0;
+            width: fit-content;
+          }
+        `}
+      </style>
+    </>
   );
 }

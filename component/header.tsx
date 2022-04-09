@@ -1,10 +1,13 @@
+import Link from 'next/link'
 import React from 'react'
 
 const Header = () => {
   return (
     <>
         <header>
-            <h1>traveler app</h1>
+            <h1>
+                <Link href="/hotel">traveler app</Link>
+            </h1>
         </header>
         <style jsx>
             {`
@@ -27,6 +30,7 @@ const Header = () => {
                     height: 100%;
                     display: flex;
                     align-items: center;
+                    cursor: pointer;
                 }
             `}
         </style>
