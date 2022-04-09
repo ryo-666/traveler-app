@@ -16,7 +16,7 @@ const Detail:FC<Props> = (props: Props) => {
       e.preventDefault();
     }
     try {
-      const url = `https://app.rakuten.co.jp/services/api/Travel/KeywordHotelSearch/20170426?format=json&keyword=${keywords}&applicationId=${process.env.NEXT_PUBLIC_APPLICATIONID}&hits=10`
+      const url = `${process.env.NEXT_PUBLIC_SUB_SEARCH_API}&keyword=${keywords}&applicationId=${process.env.NEXT_PUBLIC_APPLICATIONID}&hits=10`
       const res = await fetch(url);
       const resData = await res.json();
       // console.log(resData);
@@ -81,6 +81,8 @@ const Detail:FC<Props> = (props: Props) => {
               list-style: none;
               display: flex;
               flex-wrap: wrap;
+              max-width: 1500px;
+              margin: 0 auto;
             }
 
             li {
