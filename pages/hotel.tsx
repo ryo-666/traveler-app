@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import Header from '../component/header';
 import Footer from '../component/footer';
 import Modal from '../component/modal';
-
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 const mapStateToProps = (state) => {
   return {
@@ -19,21 +20,23 @@ const Hotel= ({ dispatch, keyword }) => {
   const [keywords, setKeywords] = useState("北海道");
   const [hoteldata, setHotelData] = useState(null);
   const [modal, setModal] = useState(false);
-  const [index, setIndex] = useState(null)
+  const [index, setIndex] = useState(null);
+  const [pageInfo, setPageInfo] = useState(null);
+  const [page, setPage] = useState(1);
+  
 
   const searchRoom = async(e: React.FormEvent<HTMLFormElement>) => {
     if (e) {
       e.preventDefault();
     }
     try {
-      const url = `${process.env.NEXT_PUBLIC_SUB_SEARCH_API}&keyword=${keywords}&applicationId=${process.env.NEXT_PUBLIC_APPLICATIONID}&hits=10`
+      const url = `${process.env.NEXT_PUBLIC_SUB_SEARCH_API}&keyword=${keywords}&applicationId=${process.env.NEXT_PUBLIC_APPLICATIONID}&hits=10&page=${page}`
       const res = await fetch(url);
       const resData = await res.json();
-      // console.log(resData);
       const hotelsdata = resData.hotels;
+      const pinfo = resData.pagingInfo;
       setHotelData(hotelsdata)
-      // console.log(hotelsdata)
-      // console.log(hoteldata[0].hotel[0].hotelBasicInfo.access)
+      setPageInfo(pinfo)
       
     } catch (error) {
       console.log(error);
@@ -45,9 +48,14 @@ const Hotel= ({ dispatch, keyword }) => {
     setModal(true);
   }
 
+  const changePage = (page) => {
+    setPage(page)
+    searchRoom(null)
+}
 
   useEffect(() => {
     searchRoom(null)
+    console.log(pageInfo)
   }, [])
 
   return (
@@ -70,6 +78,11 @@ const Hotel= ({ dispatch, keyword }) => {
                     </li>
                 ))}
               </ul>
+              <div className='pager'>
+                <Stack spacing={2}>
+                  <Pagination page={page} count={10} color="primary" onChange={(e, page) => changePage(page)} />
+                </Stack>
+              </div>
         </div>
         {modal && 
           <Modal item={hoteldata} index={index} onClick={() => setModal(false)}/>
@@ -155,6 +168,11 @@ const Hotel= ({ dispatch, keyword }) => {
 
             body {
                 margin: 0;
+            }
+
+            .pager {
+              width: fit-content;
+              margin: 50px auto 0;
             }
           `}
         </style>
