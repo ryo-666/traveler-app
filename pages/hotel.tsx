@@ -4,6 +4,7 @@ import MediaList from '../component/MediaList';
 import { connect } from 'react-redux';
 import Header from '../component/header';
 import Footer from '../component/footer';
+import Modal from '../component/modal';
 
 
 const mapStateToProps = (state) => {
@@ -17,6 +18,8 @@ const mapStateToProps = (state) => {
 const Hotel= ({ dispatch, keyword }) => {
   const [keywords, setKeywords] = useState("北海道");
   const [hoteldata, setHotelData] = useState(null);
+  const [modal, setModal] = useState(false);
+  const [index, setIndex] = useState(null)
 
   const searchRoom = async(e: React.FormEvent<HTMLFormElement>) => {
     if (e) {
@@ -30,11 +33,18 @@ const Hotel= ({ dispatch, keyword }) => {
       const hotelsdata = resData.hotels;
       setHotelData(hotelsdata)
       // console.log(hotelsdata)
+      // console.log(hoteldata[0].hotel[0].hotelBasicInfo.access)
       
     } catch (error) {
       console.log(error);
     }
   }
+
+  const openModal = (value) => {
+    setIndex(value)
+    setModal(true);
+  }
+
 
   useEffect(() => {
     searchRoom(null)
@@ -55,12 +65,15 @@ const Hotel= ({ dispatch, keyword }) => {
                   hoteldata.map((item, index) => (
                     <li key={index}>
                         <a>
-                            <MediaList item={item}/>
+                            <MediaList item={item} index={index} onClick={() => openModal(index)} />
                         </a>
                     </li>
                 ))}
               </ul>
         </div>
+        {modal && 
+          <Modal item={hoteldata} index={index} onClick={() => setModal(false)}/>
+        }
         <Footer />
         <style jsx>
           {`
@@ -79,13 +92,18 @@ const Hotel= ({ dispatch, keyword }) => {
               list-style: none;
               margin: 0 auto;
               width: fit-content;
-
+              padding: 0;
             }
 
             li {
               list-style: none;
               margin: 0;
               border-top: 1px solid #cdcdcd;
+              cursor: pointer;
+            }
+
+            li:hover {
+              opacity: 0.8;
             }
 
             .pad {

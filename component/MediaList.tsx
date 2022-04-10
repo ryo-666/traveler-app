@@ -12,20 +12,21 @@ import Typography from '@mui/material/Typography';
 
 interface Props {
     item: any;
-    onClick?: () => void;
+    index: number;
+    onClick?: (value: number) => void;
 }
 
 const MediaList:FC<Props> = (props: Props) => {
 
   // console.log(props);
   return (
-    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+    <List onClick={() => props.onClick(props.index)} sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
       <ListItem alignItems="flex-start">
         <ListItemAvatar>
           <Avatar alt="Remy Sharp" src={props.item.hotel[0].hotelBasicInfo.roomImageUrl} />
         </ListItemAvatar>
         <ListItemText
-          primary="Brunch this weekend?"
+          primary=""
           secondary={
             <React.Fragment>
               <Typography
