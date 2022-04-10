@@ -115,6 +115,7 @@ export default function Auth() {
                 required
                 fullWidth
                 type="text"
+                placeholder='ユーザーネーム'
                 autoComplete="text"
                 autoFocus
                 value={username}
@@ -127,6 +128,7 @@ export default function Auth() {
                 required
                 fullWidth
                 type="password"
+                placeholder='パスワード'
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => {
@@ -134,7 +136,7 @@ export default function Auth() {
                 }}
               />
 
-              <p className='changeButton'><button type='button' onClick={() => setIsLogin(!isLogin)}>切り替えボタン</button></p>
+              <p className='changeButton'><button type='button' onClick={() => setIsLogin(!isLogin)}>{isLogin ? '新規登録に切り替え' : 'ログインに切り替え'}</button></p>
               
               <Button
                 type="submit"

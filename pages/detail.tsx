@@ -79,15 +79,33 @@ const Detail:FC<Props> = (props: Props) => {
 
             ul {
               list-style: none;
-              display: flex;
-              flex-wrap: wrap;
               max-width: 1500px;
               margin: 0 auto;
+              padding: 0;
+            }
+
+            @media screen and (min-width: 768px) {
+              ul {
+                display: flex;
+                flex-wrap: wrap;
+                width: 90%
+              }
             }
 
             li {
               list-style: none;
-              margin: 0 20px 20px 0;
+              margin: 0 20px 20px 20px;
+            }
+
+            @media screen and (min-width: 768px) {
+              li {
+                margin: 0 2% 20px 0;
+                width: 32%;
+              }
+
+              li:nth-child(3n) {
+                margin-right: 0;
+              }
             }
 
             .main-contants {
