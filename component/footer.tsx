@@ -1,19 +1,27 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const Footer = () => {
+
+    const [path, setPath] = useState(null);
+
+    useEffect(() => {
+        const respath = window.location.pathname;
+        const checkedpath = respath.split('/')
+        setPath(checkedpath[1]);
+    }, [])
   return (
     <>
         <footer>
             <ul>
                 <li>
                     <Link href="/hotel">
-                        <a>一覧</a>
+                        <a className={path === 'hotel' ? 'active' : ''}>一覧</a>
                     </Link>
                 </li>
                 <li>
                     <Link href="/detail">
-                        <a>詳細</a>
+                        <a className={path === 'detail' ? 'active' : ''}>詳細</a>
                     </Link>
                 </li>
             </ul>
@@ -49,6 +57,14 @@ const Footer = () => {
                     padding: 5px 15px;
                     display: flex;
                     align-items: center;
+                }
+
+                li:hover {
+                    opacity: 0.4;
+                }
+
+                .active {
+                    border-bottom: skyblue 2px solid;
                 }
 
                 li a {
