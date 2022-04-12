@@ -14,6 +14,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import Cookie from 'universal-cookie';
+import Loading from './loading';
 
 const cookie = new Cookie();
 
@@ -37,9 +38,11 @@ export default function Auth() {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isLogin, setIsLogin] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   const login = async () => {
     try {
+      setLoading(true);
       await fetch(
         `${process.env.NEXT_PUBLIC_RESTAPI_URL}api/auth/jwt/create/`,
         {
@@ -61,6 +64,7 @@ export default function Auth() {
           const options = { path: "/" };
           cookie.set("access_token", data.access, options);
         });
+      setLoading(false);
       router.push("/hotel");
     } catch (err) {
       alert(err);
@@ -72,6 +76,7 @@ export default function Auth() {
     if (isLogin) {
       login();
     } else {
+      setLoading(true);
       try {
         await fetch(`${process.env.NEXT_PUBLIC_RESTAPI_URL}api/register/`, {
           method: "POST",
@@ -152,6 +157,7 @@ export default function Auth() {
           <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
       </ThemeProvider>
+      {loading && <Loading />}
       <style jsx>
         {`
           .changeButton {

@@ -78,6 +78,10 @@ const Modal:FC<Props>  = (props: Props) => {
               cursor: pointer;
             }
 
+            .backbtn:hover {
+              opacity: 0.6;
+            }
+
             .backbtn a {
               box-shadow: 0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%), 0 1px 5px 0 rgb(0 0 0 / 12%);
               padding: 5px 15px;

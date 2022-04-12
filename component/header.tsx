@@ -31,6 +31,7 @@ const Header = () => {
                     display: flex;
                     align-items: center;
                     cursor: pointer;
+                    width: fit-content;
                 }
             `}
         </style>

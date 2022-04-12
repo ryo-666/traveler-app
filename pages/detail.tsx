@@ -2,6 +2,8 @@ import React, { FC, useEffect, useState } from 'react';
 import Header from '../component/header';
 import Footer from '../component/footer';
 import DetailMedia from '../component/detailMedia';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
 interface Props {
 
@@ -10,28 +12,38 @@ interface Props {
 const Detail:FC<Props> = (props: Props) => {
   const [keywords, setKeywords] = useState("北海道");
   const [hoteldata, setHotelData] = useState(null)
+  const [page, setPage] = useState(1);
+  const [pageInfo, setPageInfo] = useState(null);
   
+
   const getInfo = async(e: React.FormEvent<HTMLFormElement>) => {
     if (e) {
       e.preventDefault();
     }
     try {
-      const url = `${process.env.NEXT_PUBLIC_SUB_SEARCH_API}&keyword=${keywords}&applicationId=${process.env.NEXT_PUBLIC_APPLICATIONID}&hits=10`
+      const url = `${process.env.NEXT_PUBLIC_SUB_SEARCH_API}&keyword=${keywords}&applicationId=${process.env.NEXT_PUBLIC_APPLICATIONID}&hits=10&page=${page}`
       const res = await fetch(url);
       const resData = await res.json();
-      // console.log(resData);
       const hotelsdata = resData.hotels;
+      const pinfo = resData.pagingInfo;
       setHotelData(hotelsdata)
-      // console.log(hotelsdata)
+      setPageInfo(pinfo)
+
       
     } catch (error) {
       console.log(error);
     }
   }
 
+  const changePage = (page) => {
+    setPage(page)
+    getInfo(null)
+  }
+
   useEffect(() => {
     getInfo(null)
   },[])
+
   return (
     <>
       <Header />
@@ -52,6 +64,11 @@ const Detail:FC<Props> = (props: Props) => {
               </li>
           ))}
         </ul>
+        <div className='pager'>
+          <Stack spacing={2}>
+            <Pagination page={page} count={10} color="primary" onChange={(e, page) => changePage(page)} />
+          </Stack>
+        </div>
       </div>
       <Footer />
       <style jsx>
@@ -153,6 +170,11 @@ const Detail:FC<Props> = (props: Props) => {
 
             body {
                 margin: 0;
+            }
+
+            .pager {
+              width: fit-content;
+              margin: 50px auto 0;
             }
           `}
       </style>
